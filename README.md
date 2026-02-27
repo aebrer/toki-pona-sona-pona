@@ -81,6 +81,102 @@ Here's a real test run. The input describes a game server's building system:
 losses were implementation-specific jargon that arguably doesn't belong in a
 high-level summary anyway.
 
+## Counterexample: a plan that was too complex
+
+This is from a real game dev project. The original plan was a 13-section
+implementation document that went through four major architectural revisions
+before shipping. Here's the initial plan, condensed:
+
+> The lighting system needs a new LightRenderer class that manages OmniLight3D
+> nodes and Sprite3D fixture visuals, indexed by chunk position in separate
+> dictionaries. Light placement follows the door placement pattern in the
+> generator — scanning ceiling tiles, checking edge margins, enforcing minimum
+> spacing with a configurable density parameter, and rolling for broken variants.
+> Light data is stored in chunk.metadata as an array of dictionaries containing
+> tile position, fixture type, broken status, color, energy, and range. The
+> LightRenderer hooks into Grid3D's load\_chunk and unload\_chunk lifecycle,
+> creating OmniLight3D nodes with tuned attenuation, zero specular for PSX
+> aesthetic, and disabled shadows. Fixture sprites are non-billboard Sprite3D
+> nodes positioned at the ceiling using empirically determined Y coordinates.
+> LevelConfig gets five new exported properties for density, broken chance, color,
+> energy, and range. A flicker system uses per-light timer dictionaries with
+> randomized intervals driving tween-based energy dips. The GL Compatibility
+> renderer's per-object light limit needs a spike test before committing to the
+> design, and if the limit is too low we may need shader-based fake lighting
+> instead.
+
+**Compressed to Toki Pona:**
+
+> nasin suno li wile e ilo sin pi pali suno. ilo ni li lawa e suno mute kepeken
+> lipu tu — lipu nanpa wan li jo e suno, lipu nanpa tu li jo e sitelen pi ilo
+> suno. ilo ni li sona e ma pi suno ale.
+>
+> jan pali li pana e suno sama nasin pi pana lupa. ona li lukin e sewi pi ma
+> tomo, li sona e noka pi suno ante, li kepeken nanpa pi pana suno. ken la suno
+> li pakala — ni li pimeja.
+>
+> sona pi suno wan li lon insa pi ma lili. sona ni li kulupu mute: ma pi suno,
+> nimi pi ilo suno, pakala anu pakala ala, kule, wawa, suli.
+>
+> ilo suno li kama lon tenpo pi open ma lili, li weka lon tenpo pi pini ma lili.
+> suno li jo ala e len pi pilin suno — ni li pona tawa lukin pi musi lili.
+> sitelen pi ilo suno li lon sewi kepeken nanpa Y pi sona lukin.
+>
+> lipu pi nasin ma li jo e nanpa lili sin: mute pi suno, ken pi pakala, kule,
+> wawa, suli. nasin pi suno pipi li kepeken tenpo pi suno wan wan. tenpo li pini
+> la suno li kama lili la suno li kama suli sin.
+>
+> ilo pi lukin pona li ken ala jo e suno mute lon ma wan. ni la mi wile sona e
+> ken pi ilo ni. ken la mi wile ante e nasin suno tawa nasin pi sitelen taso.
+
+**Blind reconstruction:**
+
+> The lighting system requires a new light rendering tool. This tool manages many
+> lights using two textures — the first texture holds the light data, and the
+> second texture holds the light sprite images. This tool knows the positions of
+> all the lights.
+>
+> The worker creates lights following a spawning method. They look at the ceiling
+> of the room, know the positions of different lights, and use lighting
+> parameters. Sometimes a light can break — this means darkness.
+>
+> The data for a single light is stored inside a small region. This data has many
+> fields: light position, light sprite name, broken or not broken, color,
+> intensity, and size.
+>
+> Lights appear when the small region is created, and disappear when the small
+> region is destroyed. Lights have no smoothing — this is good for the look of a
+> small game. The light sprite images are positioned above using the Y value of
+> the visual data.
+>
+> The map data file has new small values: number of lights, chance of breaking,
+> color, intensity, and size. The flickering light method uses a one-by-one light
+> timing cycle. When the cycle ends and the light gets small, the light grows
+> large again.
+>
+> The rendering tool cannot handle many lights in one area. So we need to
+> understand the limits of this tool. Perhaps we need to change the lighting
+> system to a sprite-only approach.
+
+**Results:**
+
+| Category | What happened |
+|----------|---------------|
+| Survived | Place lights on ceilings, store per-light fields (position, type, broken, color, energy, range), config properties for density/broken chance/color/energy/range, lights appear/disappear with chunk lifecycle, there's a light limit concern and a possible fallback approach |
+| Vanished | "Indexed by chunk position in separate dictionaries," "follows the door placement pattern," "edge margins," "minimum spacing enforcement," "tuned attenuation," "zero specular for PSX aesthetic," "tween-based energy dips," "GL Compatibility" specifics |
+| Mutated | "Two dictionaries indexed by chunk position" → "two textures" (data structure lost), "per-light timer dictionaries with randomized intervals" → "one-by-one timing cycle" (mechanism lost, behavior preserved), "shader-based fake lighting" → "sprite-only approach" (fallback misidentified) |
+
+**Verdict: this plan was too complex.** The *what* survived clearly — place
+lights on ceilings, store these fields, flicker them, worry about limits. But
+the *how* — dictionary indexing, door placement analogy, tween energy dips, GL
+Compatibility specifics — all vanished or mutated beyond recognition.
+
+In practice, this plan was thrown out and rewritten three more times before
+shipping. The core requirements (the parts that survived compression) stayed the
+same through every revision. The implementation details (the parts that
+vanished) changed completely. The linter would have flagged this up front: you
+know *what* you want, but the *how* is overspecified and likely wrong.
+
 ## Installation
 
 Clone this repo and symlink the skill into your Claude Code skills directory:
