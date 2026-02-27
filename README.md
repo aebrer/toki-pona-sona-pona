@@ -48,7 +48,8 @@ abstraction, and overcomplicated language, leaving only the core intent.
 
 ## Example: a clear plan (passes)
 
-Here's a real test run. The input describes a game server's building system:
+From [minecraft-god](https://github.com/aebrer/minecraft-god), a Minecraft
+server with dual LLM deities. The input describes its schematic building system:
 
 > The Minecraft server has a schematic system with 2,139 blueprints across 30
 > categories. A Python scraping pipeline fetches building designs from GrabCraft,
@@ -93,11 +94,12 @@ high-level summary anyway.
 
 ## Example: an overcomplicated plan (fails)
 
-Same project, different feature. An AI agent produced a 13-section
-implementation plan for a lighting system. The plan went through four major
-architectural revisions before shipping — the agent overspecified the *how*
-while the *what* stayed the same the entire time. Here's the initial plan,
-condensed:
+From [deep_yellow](https://github.com/aebrer/deep_yellow), a Godot horror game.
+An AI agent produced a 13-section implementation plan for a
+[dynamic lighting system](https://github.com/aebrer/deep_yellow/issues/59).
+The plan went through four major architectural revisions before shipping — the
+agent overspecified the *how* while the *what* stayed the same the entire time.
+Here's the initial plan, condensed:
 
 > The lighting system needs a new LightRenderer class that manages OmniLight3D
 > nodes and Sprite3D fixture visuals, indexed by chunk position in separate
