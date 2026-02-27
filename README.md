@@ -237,6 +237,23 @@ it doesn't, you've found either unnecessary complexity, hidden assumptions that
 need to be stated explicitly, or ideas that aren't well enough understood to
 communicate simply.
 
+## A note for Toki Pona speakers
+
+The Toki Pona produced by this tool is not how a human would say things — and
+that's fine. This isn't a Toki Pona communication tool. It's a two-person
+conversation between two copies of the same model, using their own shared
+intuitive understanding of the language. The translating agent and the blind
+agent are essentially the same "person" — they have the same training, the same
+internal representations, the same instincts about what *nimi suno pipi* means.
+The TP doesn't need to be correct by human standards. It needs to be a
+consistent lossy encoding that the same model can decode on the other end. Think
+of it less as "writing Toki Pona" and more as "compressing through a
+Toki-Pona-shaped bottleneck."
+
+That said, if you're a fluent speaker and the translations make you wince —
+fair. We welcome PRs that improve the translation prompts. Better TP in means
+better signal out.
+
 ## License
 
 MIT
