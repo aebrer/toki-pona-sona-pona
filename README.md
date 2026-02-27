@@ -4,21 +4,31 @@
 
 A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that uses
 [Toki Pona](https://tokipona.org/) — a constructed language with only ~130
-words — as a complexity linter for plans and ideas.
+words — as a complexity linter for AI agent plans.
+
+## The problem
+
+AI coding agents have a tendency to overcomplicate things. They'll propose a
+13-section implementation plan with custom abstractions, multiple new classes,
+and speculative architecture — when the actual task needs three files changed.
+By the time a human reads through the wall of text and spots the overengineering,
+the agent may have already started building it.
 
 ## The concept
 
-If a plan can survive round-trip translation through a 130-word language and
-back, its core is clear. If it can't, something is overcomplicated or unclear.
+This skill catches overcomplicated plans *before* implementation begins by
+running them through lossy semantic compression. If a plan can survive
+round-trip translation through a 130-word language and back, its core is clear.
+If it can't, the agent is probably overcomplicating things.
 
 The skill works in four steps:
 
-1. You describe a plan, architecture, or idea
+1. The agent produces a plan, architecture, or implementation proposal
 2. Claude translates it into Toki Pona, compressing it down to semantic
    primitives
 3. A **blind** agent (with zero context about the original) translates the Toki
    Pona back into English
-4. You compare the original and reconstruction to see what survived, what
+4. Compare the original and reconstruction to see what survived, what
    vanished, and what mutated
 
 This is essentially the "explain it to a five-year-old" test, but mechanized
@@ -27,16 +37,16 @@ abstraction, and overcomplicated language, leaving only the core intent.
 
 ## What the results tell you
 
-- **Survived** — the essential parts of your plan. Clear, simple,
-  well-understood.
-- **Vanished** — either unnecessary fluff (good to lose) or critical details
-  too specific for the compression (flag these as risk areas that need extra
-  attention when communicating the plan to others).
-- **Mutated** — places where your language was more complicated than the
+- **Survived** — the essential parts of the plan. Clear, simple,
+  well-understood. This is what actually matters.
+- **Vanished** — either unnecessary complexity the agent added (good to lose)
+  or critical details too specific for the compression (flag these as risk
+  areas that need extra attention).
+- **Mutated** — places where the agent's language was more complicated than the
   underlying idea. The mutated version may actually be *clearer* than the
   original.
 
-## Live example
+## Example: a clear plan (passes)
 
 Here's a real test run. The input describes a game server's building system:
 
@@ -81,11 +91,13 @@ Here's a real test run. The input describes a game server's building system:
 losses were implementation-specific jargon that arguably doesn't belong in a
 high-level summary anyway.
 
-## Counterexample: a plan that was too complex
+## Example: an overcomplicated plan (fails)
 
-This is from a real game dev project. The original plan was a 13-section
-implementation document that went through four major architectural revisions
-before shipping. Here's the initial plan, condensed:
+Same project, different feature. An AI agent produced a 13-section
+implementation plan for a lighting system. The plan went through four major
+architectural revisions before shipping — the agent overspecified the *how*
+while the *what* stayed the same the entire time. Here's the initial plan,
+condensed:
 
 > The lighting system needs a new LightRenderer class that manages OmniLight3D
 > nodes and Sprite3D fixture visuals, indexed by chunk position in separate
@@ -174,8 +186,8 @@ Compatibility specifics — all vanished or mutated beyond recognition.
 In practice, this plan was thrown out and rewritten three more times before
 shipping. The core requirements (the parts that survived compression) stayed the
 same through every revision. The implementation details (the parts that
-vanished) changed completely. The linter would have flagged this up front: you
-know *what* you want, but the *how* is overspecified and likely wrong.
+vanished) changed completely. The linter would have flagged this up front: the agent knew *what* it wanted to
+build, but the *how* was overspecified and likely wrong.
 
 ## Installation
 
@@ -197,8 +209,8 @@ In any Claude Code session:
 Or just describe a plan and say "complexity check" or "is this too
 complicated?"
 
-The skill can also be triggered proactively by Claude after you've
-collaboratively arrived at a plan — to sanity-check it before implementation.
+The skill can also be triggered proactively by Claude after it proposes a plan —
+to sanity-check its own work before implementation begins.
 
 ## Why Toki Pona?
 
