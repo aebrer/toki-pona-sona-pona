@@ -94,9 +94,9 @@ high-level summary anyway.
 
 ## Example: an overcomplicated plan (fails)
 
-From [deep_yellow](https://github.com/aebrer/deep_yellow), a Godot horror game.
+From [DEEP YELLOW](https://github.com/aebrer/deep-yellow), a Godot horror game.
 An AI agent produced a 13-section implementation plan for a
-[dynamic lighting system](https://github.com/aebrer/deep_yellow/issues/59).
+[dynamic lighting system](https://github.com/aebrer/deep-yellow/issues/59).
 The plan went through four major architectural revisions before shipping — the
 agent overspecified the *how* while the *what* stayed the same the entire time.
 Here's the initial plan, condensed:
