@@ -3,7 +3,8 @@
 #
 # Runs the agent's plan through Toki Pona round-trip compression before
 # the user sees it. If the plan doesn't survive the round trip cleanly,
-# the hook blocks ExitPlanMode and tells the agent to simplify.
+# the hook blocks ExitPlanMode and tells the agent to clarify — the plan
+# may be overcomplicated, contain hidden assumptions, or lack clarity.
 #
 # Requires: claude CLI, python3
 #
@@ -117,7 +118,7 @@ $RECON
 Your response MUST begin with exactly PASS or FAIL on its own line.
 
 PASS — the core concepts, structure, and intent survived. Synonyms and rephrasings are fine.
-FAIL — significant architectural decisions, key requirements, or structural elements were lost or mutated beyond recognition, suggesting the plan is overspecified or unclear.
+FAIL — significant elements were lost or mutated beyond recognition, suggesting the plan contains hidden assumptions, unresolved ambiguity, or unnecessary complexity.
 
 After the verdict, write 2-3 concise sentences about what survived, what vanished, and what mutated." > "$VERDICT_FILE" 2>/dev/null
 log "Step 3 done (exit $?, $(wc -c < "$VERDICT_FILE") bytes)"
@@ -137,16 +138,17 @@ case "$FIRST_LINE" in
     FAIL*)
         log "DECISION: FAIL — blocking ExitPlanMode (exit 2)"
         cat >&2 <<FEEDBACK
-toki pona, sona pona — complexity check FAILED
+toki pona, sona pona — clarity check FAILED
 
 $VERDICT
 
 BLIND RECONSTRUCTION (what survived compression):
 $RECON
 
-The parts that vanished or mutated may be overspecified, overly abstract,
-or unclear. Consider simplifying your plan before presenting it. Focus on
-the *what* and *why*, not the *how*.
+Parts that vanished may be hidden assumptions you're making but not
+communicating. Parts that mutated may be ideas expressed more complexly
+than needed. Clarify your plan before presenting it — make assumptions
+explicit, resolve ambiguity, and simplify where possible.
 FEEDBACK
         exit 2
         ;;

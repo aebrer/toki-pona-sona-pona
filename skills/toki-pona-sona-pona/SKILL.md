@@ -1,26 +1,28 @@
 ---
 name: toki-pona-sona-pona
 description: >
-  Complexity linter for plans and ideas. Translates text through Toki Pona (a
+  Clarity check for plans and ideas. Translates text through Toki Pona (a
   130-word constructed language) and back via a blind agent to test whether the
-  core concept survives lossy semantic compression. Use when the user says
-  "toki pona sona pona", "complexity check", "is this too complicated?", or
-  wants to validate that a plan or investigation summary is clear and simple.
+  core concept survives lossy semantic compression. Catches overcomplexity,
+  hidden assumptions, and unclear communication. Use when the user says
+  "toki pona sona pona", "clarity check", "complexity check", "is this too
+  complicated?", or wants to validate that a plan is clearly communicated.
   PROACTIVE USE: Also offer to run this skill unprompted after you and the user
   have collaboratively arrived at a non-trivial plan or architecture — especially
-  before implementation begins. A quick "want me to complexity-check this?" goes
+  before implementation begins. A quick "want me to clarity-check this?" goes
   a long way. Good moments to offer: after finalizing a multi-step plan, after a
-  long design discussion, or when a plan has gone through several revisions and
-  might have accumulated unnecessary complexity.
+  long design discussion, when a plan has gone through several revisions, or
+  when you notice the plan contains assumptions that haven't been validated.
 ---
 
 # toki pona, sona pona
 
 *"simple speech, good knowledge"*
 
-A complexity linter that uses Toki Pona as a lossy semantic compression format.
+A clarity check that uses Toki Pona as a lossy semantic compression format.
 If a plan can survive round-trip translation through a 130-word language and
-back, its core is clear. If it can't, something is overcomplicated or unclear.
+back, its ideas are clearly communicated. If it can't, something is
+overcomplicated, relies on hidden assumptions, or isn't clearly expressed.
 
 ## How It Works
 
@@ -74,20 +76,22 @@ back, its core is clear. If it can't, something is overcomplicated or unclear.
 4. **Compare the original and reconstruction.** Analyze three categories:
 
    - **Survived**: Core concepts that made it through intact. These are the
-     essential parts of the plan — clear, simple, well-understood.
+     clearly communicated parts of the plan — well-understood, no ambiguity.
    - **Vanished**: Things present in the original but absent from the
-     reconstruction. These are either unnecessary fluff (good to lose) or
-     critical details too specific for compression (flag as risk areas that
-     need extra attention when communicating the plan).
+     reconstruction. These are either unnecessary detail (good to lose),
+     hidden assumptions the author didn't realize they were making, or
+     critical specifics that need to be communicated more explicitly.
    - **Mutated**: Things that came back *different*. These reveal where the
-     original language was more complicated than the underlying idea. The
+     original language was more complicated than the underlying idea, or
+     where an assumption was encoded implicitly rather than stated. The
      mutated version may actually be clearer.
 
 5. **Report the results.** Present:
    - The Toki Pona translation (so the user can see it)
    - The blind reconstruction
    - A comparison highlighting what survived, vanished, and mutated
-   - A verdict: is the plan clear, or does it need simplification?
+   - A verdict: is the plan clearly communicated, or are there hidden
+     assumptions, unresolved ambiguity, or unnecessary complexity?
 
 ## Guidelines
 
@@ -99,8 +103,10 @@ back, its core is clear. If it can't, something is overcomplicated or unclear.
   "survived" — you're testing semantic survival, not exact wording.
 - For long documents, translate the whole thing to a temp file. Do NOT
   summarize first — that's you doing the compression, not Toki Pona.
-- The most interesting output is often the mutations — point these out
-  specifically, because they reveal where simpler language would serve better.
+- The most interesting output is often the mutations and vanished items —
+  point these out specifically. Mutations reveal where simpler language
+  would serve better. Vanished items may reveal hidden assumptions that
+  the author took for granted but a reader wouldn't know.
 
 ## Example Invocations
 

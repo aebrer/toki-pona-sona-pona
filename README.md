@@ -4,22 +4,25 @@
 
 A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that uses
 [Toki Pona](https://tokipona.org/) — a constructed language with only ~130
-words — as a complexity linter for AI agent plans.
+words — as a clarity check for AI agent plans.
 
 ## The problem
 
-AI coding agents have a tendency to overcomplicate things. They'll propose a
-13-section implementation plan with custom abstractions, multiple new classes,
-and speculative architecture — when the actual task needs three files changed.
-By the time a human reads through the wall of text and spots the overengineering,
-the agent may have already started building it.
+AI coding agents don't just overcomplicate things — they make hidden
+assumptions, leave ambiguity in key decisions, and bury unresolved questions
+under confident-sounding prose. They'll propose a 13-section implementation plan
+that reads like it has everything figured out, but quietly assumes an approach to
+a problem they haven't actually solved yet. By the time a human reads through
+the wall of text and catches what's missing, the agent may have already started
+building on a shaky foundation.
 
 ## The concept
 
-This skill catches overcomplicated plans *before* implementation begins by
-running them through lossy semantic compression. If a plan can survive
-round-trip translation through a 130-word language and back, its core is clear.
-If it can't, the agent is probably overcomplicating things.
+This skill checks whether a plan's ideas are clearly communicated *before*
+implementation begins by running them through lossy semantic compression. If a
+plan can survive round-trip translation through a 130-word language and back, its
+core ideas are clear. If it can't, something is overcomplicated, relies on
+hidden assumptions, or isn't well enough understood to be expressed simply.
 
 The skill works in four steps:
 
@@ -33,18 +36,20 @@ The skill works in four steps:
 
 This is essentially the "explain it to a five-year-old" test, but mechanized
 and repeatable. The forced compression strips away jargon, unnecessary
-abstraction, and overcomplicated language, leaving only the core intent.
+abstraction, and overcomplicated language — but it also exposes hidden
+assumptions and unresolved decisions, because things you haven't clearly thought
+through can't survive translation into 130 words.
 
 ## What the results tell you
 
-- **Survived** — the essential parts of the plan. Clear, simple,
-  well-understood. This is what actually matters.
-- **Vanished** — either unnecessary complexity the agent added (good to lose)
-  or critical details too specific for the compression (flag these as risk
-  areas that need extra attention).
+- **Survived** — the clearly communicated parts of the plan. No ambiguity, no
+  hidden assumptions. This is what actually matters.
+- **Vanished** — either unnecessary detail (good to lose), hidden assumptions
+  the agent didn't realize it was making, or critical specifics that weren't
+  communicated explicitly enough to survive compression.
 - **Mutated** — places where the agent's language was more complicated than the
-  underlying idea. The mutated version may actually be *clearer* than the
-  original.
+  underlying idea, or where an implicit assumption got reinterpreted. The
+  mutated version may actually be *clearer* than the original.
 
 ## Example: a clear plan (passes)
 
@@ -180,16 +185,20 @@ Here's the initial plan, condensed:
 | Vanished | "Indexed by chunk position in separate dictionaries," "follows the door placement pattern," "edge margins," "minimum spacing enforcement," "tuned attenuation," "zero specular for PSX aesthetic," "tween-based energy dips," "GL Compatibility" specifics |
 | Mutated | "Two dictionaries indexed by chunk position" → "two textures" (data structure lost), "per-light timer dictionaries with randomized intervals" → "one-by-one timing cycle" (mechanism lost, behavior preserved), "shader-based fake lighting" → "sprite-only approach" (fallback misidentified) |
 
-**Verdict: this plan was too complex.** The *what* survived clearly — place
-lights on ceilings, store these fields, flicker them, worry about limits. But
-the *how* — dictionary indexing, door placement analogy, tween energy dips, GL
-Compatibility specifics — all vanished or mutated beyond recognition.
+**Verdict: this plan wasn't clearly communicating its ideas.** The *what*
+survived clearly — place lights on ceilings, store these fields, flicker them,
+worry about limits. But the *how* — dictionary indexing, door placement analogy,
+tween energy dips, GL Compatibility specifics — all vanished or mutated beyond
+recognition. These weren't just overcomplicated; they were assumptions about
+implementation approach that the agent presented as settled decisions without
+actually validating them.
 
 In practice, this plan was thrown out and rewritten three more times before
 shipping. The core requirements (the parts that survived compression) stayed the
 same through every revision. The implementation details (the parts that
-vanished) changed completely. The linter would have flagged this up front: the agent knew *what* it wanted to
-build, but the *how* was overspecified and likely wrong.
+vanished) changed completely. A clarity check would have flagged this up front:
+the agent knew *what* it wanted to build, but the *how* was a pile of
+unvalidated assumptions dressed up as a plan.
 
 ## Installation
 
@@ -208,11 +217,12 @@ In any Claude Code session:
 /toki-pona-sona-pona
 ```
 
-Or just describe a plan and say "complexity check" or "is this too
-complicated?"
+Or just describe a plan and say "clarity check", "complexity check", or "is
+this too complicated?"
 
 The skill can also be triggered proactively by Claude after it proposes a plan —
-to sanity-check its own work before implementation begins.
+to check its own work for hidden assumptions and unclear communication before
+implementation begins.
 
 ## Why Toki Pona?
 
@@ -222,9 +232,10 @@ goal of expressing maximal meaning with minimal complexity. Its vocabulary of
 components.
 
 This makes it an ideal "lossy compression codec" for ideas. If your idea
-survives the round trip, its essence is communicable in basic human concepts. If
-it doesn't, you may be overcomplicating things — or you've identified the
-specific details that need careful, explicit communication.
+survives the round trip, it's clearly expressed in fundamental human concepts. If
+it doesn't, you've found either unnecessary complexity, hidden assumptions that
+need to be stated explicitly, or ideas that aren't well enough understood to
+communicate simply.
 
 ## License
 
